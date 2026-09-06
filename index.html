@@ -605,15 +605,21 @@
     content: urlParams.get("utm_content") || ""
   };
 
-  function track(eventName, params = {}) {
-    if (!GA_MEASUREMENT_ID) return;
-    gtag("event", eventName, {
-      ...params,
-      utm_source: utm.source,
-      utm_medium: utm.medium,
-      utm_campaign: utm.campaign,
-      utm_content: utm.content
-    });
+  function track(eventName, params) {
+    // 計測処理の失敗で診断UIを止めない
+    try {
+      if (!GA_MEASUREMENT_ID) return;
+      params = params || {};
+      const payload = Object.assign({}, params, {
+        utm_source: utm.source,
+        utm_medium: utm.medium,
+        utm_campaign: utm.campaign,
+        utm_content: utm.content
+      });
+      gtag("event", eventName, payload);
+    } catch (e) {
+      console.warn("GA4 tracking skipped:", e);
+    }
   }
 
   /* =========================
@@ -780,9 +786,17 @@
   const restartBtn = document.getElementById("restartBtn");
 
   function showScreen(target){
-    [screenStart, screenQuiz, screenResult].forEach(s => s.classList.remove("active"));
+    [screenStart, screenQuiz, screenResult].forEach(function(s){
+      s.classList.remove("active");
+    });
     target.classList.add("active");
-    window.scrollTo({top:0, behavior:"smooth"});
+
+    // Androidの一部WebView/ブラウザでも確実に先頭へ移動
+    try {
+      window.scrollTo({top:0, left:0, behavior:"auto"});
+    } catch (e) {
+      window.scrollTo(0, 0);
+    }
   }
 
   /* =========================
@@ -911,6 +925,11 @@ ${issueNames}
     emailBtn.dataset.score = total;
     copyBtn.dataset.text = consultText;
 
+    // 先に結果画面を表示する。
+    // GA4や外部スクリプトの状態に関係なく診断結果を見られるようにする。
+    showScreen(screenResult);
+
+    // 計測は画面表示後に実行
     track("diagnosis_complete", {
       score: total,
       result_status: status.text,
@@ -922,8 +941,6 @@ ${issueNames}
     if (total >= 80) track("result_good", {score:total});
     else if (total >= 60) track("result_check", {score:total});
     else track("result_improve", {score:total});
-
-    showScreen(screenResult);
   }
 
   /* =========================
@@ -946,14 +963,19 @@ ${issueNames}
     }
   });
 
-  nextBtn.addEventListener("click", () => {
+  nextBtn.addEventListener("click", function() {
     if (selected[current] === null) return;
 
-    if (current < questions.length - 1) {
-      current++;
-      renderQuestion();
-    } else {
-      showResult();
+    try {
+      if (current < questions.length - 1) {
+        current++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    } catch (e) {
+      console.error("Result rendering error:", e);
+      alert("診断結果の表示に失敗しました。ページを再読み込みしてもう一度お試しください。");
     }
   });
 
