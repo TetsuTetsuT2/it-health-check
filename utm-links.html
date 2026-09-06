@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中小企業IT健康診断 UTM URL作成ツール</title>
+<style>
+:root{--bg:#f6f8fb;--card:#fff;--text:#14213d;--muted:#64748b;--line:#dbe2ea;--blue:#2563eb;--blue2:#1d4ed8;--green:#0f9d58}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;line-height:1.6}
+.wrap{max-width:850px;margin:0 auto;padding:24px 16px 48px}h1{font-size:clamp(24px,5vw,34px);line-height:1.25;margin:0 0 8px}.lead{color:var(--muted);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 24px rgba(15,23,42,.06);margin-bottom:16px}
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.preset{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 10px;font-weight:700;cursor:pointer}.preset:hover{border-color:#93c5fd;background:#eff6ff}
+label{display:block;font-size:13px;font-weight:800;margin:12px 0 5px}input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;color:var(--text)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.urlbox{width:100%;min-height:92px;border:1px solid var(--line);background:#f8fafc;border-radius:12px;padding:12px;word-break:break-all;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}button.primary,button.secondary{padding:13px;border-radius:12px;font:inherit;font-weight:800;cursor:pointer}button.primary{border:0;background:var(--blue);color:#fff}button.primary:hover{background:var(--blue2)}button.secondary{border:1px solid var(--line);background:#fff;color:var(--text)}
+.status{min-height:25px;margin-top:8px;color:var(--green);font-weight:700;font-size:13px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{width:140px;color:var(--muted)}.note{font-size:13px;color:var(--muted)}code{background:#eef2ff;padding:2px 5px;border-radius:5px}
+@media(max-width:600px){.presets{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>中小企業IT健康診断<br>UTM URL作成ツール</h1>
+<p class="lead">媒体・配布場所・バージョンごとにURLを分け、GA4で流入元を判別するための管理ツールです。</p>
+<div class="card"><strong>よく使う媒体</strong><div class="presets" style="margin-top:12px">
+<button class="preset" data-source="entrepreneur_meetup" data-medium="print" data-content="a4_v01">A4診断用紙 v01</button>
+<button class="preset" data-source="business_card" data-medium="print" data-content="card_v01">名刺</button>
+<button class="preset" data-source="x" data-medium="social" data-content="post01">X投稿</button>
+<button class="preset" data-source="note" data-medium="article" data-content="note01">note</button>
+<button class="preset" data-source="flyer" data-medium="print" data-content="flyer_v01">チラシ</button>
+<button class="preset" data-source="website" data-medium="referral" data-content="link01">WEBリンク</button>
+</div></div>
+<div class="card">
+<label for="base">診断WEBのベースURL</label><input id="base" value="https://tetsutetsut2.github.io/it-health-check/">
+<div class="grid">
+<div><label for="source">utm_source（どこから）</label><input id="source" value="entrepreneur_meetup"></div>
+<div><label for="medium">utm_medium（媒体タイプ）</label><input id="medium" value="print"></div>
+<div><label for="campaign">utm_campaign（施策）</label><input id="campaign" value="it_health_check"></div>
+<div><label for="content">utm_content（制作物・版）</label><input id="content" value="a4_v01"></div>
+</div>
+<label>生成URL</label><div id="url" class="urlbox"></div>
+<div class="actions"><button id="copy" class="primary">URLをコピー</button><button id="nextCopy" class="primary">次を追加してコピー</button></div>
+<button id="reset" class="secondary" style="width:100%;margin-top:10px">初期値に戻す</button><div id="status" class="status"></div>
+</div>
+<div class="card"><strong>現在のUTM</strong><table>
+<tr><th>source</th><td id="vSource"></td></tr><tr><th>medium</th><td id="vMedium"></td></tr><tr><th>campaign</th><td id="vCampaign"></td></tr><tr><th>content</th><td id="vContent"></td></tr>
+</table></div>
+<div class="card note"><strong>命名ルール</strong><br>
+<code>utm_source</code> = 配布場所・プラットフォーム、<code>utm_medium</code> = 媒体タイプ、<code>utm_campaign</code> = IT健康診断、<code>utm_content</code> = 個別制作物・バージョン。<br><br>
+例：交流会で配るA4初版 → <code>entrepreneur_meetup / print / it_health_check / a4_v01</code><br>
+Xの2投稿目 → <code>x / social / it_health_check / post02</code>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);const fields=['base','source','medium','campaign','content'];
+function buildUrl(){let base=$('base').value.trim();if(!/^https?:\/\//i.test(base))base='https://'+base;let u;try{u=new URL(base)}catch(e){$('url').textContent='URLが正しくありません';return''}const p={utm_source:$('source').value.trim(),utm_medium:$('medium').value.trim(),utm_campaign:$('campaign').value.trim(),utm_content:$('content').value.trim()};Object.entries(p).forEach(([k,v])=>{if(v)u.searchParams.set(k,v);else u.searchParams.delete(k)});const r=u.toString();$('url').textContent=r;$('vSource').textContent=p.utm_source||'-';$('vMedium').textContent=p.utm_medium||'-';$('vCampaign').textContent=p.utm_campaign||'-';$('vContent').textContent=p.utm_content||'-';return r}
+function incrementContent(){const el=$('content'),s=el.value.trim(),m=s.match(/(\d+)(?!.*\d)/);if(m){const old=m[1],next=String(Number(old)+1).padStart(old.length,'0');el.value=s.slice(0,m.index)+next+s.slice(m.index+old.length)}else if(s){el.value=s+'_02'}else{el.value='item02'}buildUrl()}
+async function copyText(text,msg){try{await navigator.clipboard.writeText(text)}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}$('status').textContent=msg;setTimeout(()=>$('status').textContent='',1800)}
+fields.forEach(id=>$(id).addEventListener('input',buildUrl));document.querySelectorAll('.preset').forEach(btn=>btn.addEventListener('click',()=>{$('source').value=btn.dataset.source;$('medium').value=btn.dataset.medium;$('campaign').value='it_health_check';$('content').value=btn.dataset.content;buildUrl()}));
+$('copy').addEventListener('click',()=>{const u=buildUrl();if(u)copyText(u,'コピーしました')});$('nextCopy').addEventListener('click',()=>{incrementContent();const u=buildUrl();if(u)copyText(u,'次の番号にしてコピーしました')});$('reset').addEventListener('click',()=>{$('base').value='https://tetsutetsut2.github.io/it-health-check/';$('source').value='entrepreneur_meetup';$('medium').value='print';$('campaign').value='it_health_check';$('content').value='a4_v01';buildUrl()});buildUrl();
+</script>
+</body></html>
