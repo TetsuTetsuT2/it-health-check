@@ -1,0 +1,1014 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="2分・10問でわかる中小企業IT健康診断。IT健康度、優先課題TOP3、まず確認したいポイントを無料で診断します。" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>2分でわかる 中小企業IT健康診断</title>
+
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --primary:#2563eb;
+      --primary-dark:#1d4ed8;
+      --soft:#eff6ff;
+      --good:#15803d;
+      --warn:#b45309;
+      --danger:#b91c1c;
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --radius:20px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.7;
+    }
+
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+
+    .app{
+      min-height:100dvh;
+      padding:20px 16px calc(28px + env(safe-area-inset-bottom));
+    }
+
+    .wrap{
+      width:min(100%,720px);
+      margin:0 auto;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:4px 0 16px;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+
+    .brand-badge{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:var(--text);
+      font-weight:900;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:24px 20px;
+    }
+
+    .screen{display:none}
+    .screen.active{display:block}
+
+    .eyebrow{
+      color:var(--primary);
+      font-weight:800;
+      font-size:14px;
+      margin-bottom:8px;
+    }
+
+    h1,h2,h3,p{margin-top:0}
+    h1{
+      font-size:clamp(30px,7vw,44px);
+      line-height:1.22;
+      margin-bottom:14px;
+      letter-spacing:-.02em;
+    }
+
+    h2{
+      font-size:clamp(25px,6vw,34px);
+      line-height:1.35;
+      margin-bottom:14px;
+      letter-spacing:-.01em;
+    }
+
+    h3{
+      font-size:20px;
+      line-height:1.45;
+      margin-bottom:10px;
+    }
+
+    .lead{
+      color:#334155;
+      font-size:17px;
+      margin-bottom:18px;
+    }
+
+    .checks{
+      list-style:none;
+      margin:18px 0 24px;
+      padding:0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .checks li{
+      background:#f8fafc;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .checks li::before{
+      content:"✓";
+      color:var(--good);
+      font-weight:900;
+      margin-right:7px;
+    }
+
+    .btn{
+      width:100%;
+      border:0;
+      border-radius:14px;
+      padding:15px 18px;
+      font-weight:800;
+      font-size:17px;
+      transition:.15s ease;
+    }
+
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{
+      color:#fff;
+      background:var(--primary);
+    }
+    .btn-primary:hover{background:var(--primary-dark)}
+
+    .btn-secondary{
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .btn-line{
+      background:#06c755;
+      color:white;
+    }
+
+    .btn-email{
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:12px;
+    }
+
+    .target{
+      margin-top:18px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .progress-wrap{
+      margin-bottom:22px;
+    }
+
+    .progress-meta{
+      display:flex;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .progress{
+      height:8px;
+      background:#e2e8f0;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress > div{
+      height:100%;
+      width:10%;
+      background:var(--primary);
+      border-radius:999px;
+      transition:width .2s ease;
+    }
+
+    .question{
+      font-size:23px;
+      line-height:1.45;
+      font-weight:850;
+      margin:8px 0 20px;
+    }
+
+    .answers{
+      display:grid;
+      gap:12px;
+    }
+
+    .answer{
+      width:100%;
+      text-align:left;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:15px 16px;
+      color:var(--text);
+      font-weight:700;
+      line-height:1.5;
+    }
+
+    .answer:hover{
+      border-color:#93c5fd;
+      background:#f8fbff;
+    }
+
+    .answer.selected{
+      border:2px solid var(--primary);
+      background:var(--soft);
+    }
+
+    .q-actions{
+      display:flex;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .q-actions .btn{font-size:15px}
+    .q-actions .btn:first-child{width:38%}
+    .q-actions .btn:last-child{width:62%}
+
+    .score-box{
+      text-align:center;
+      padding:8px 0 18px;
+    }
+
+    .score{
+      font-size:64px;
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.04em;
+      margin:8px 0 6px;
+    }
+
+    .score small{
+      font-size:24px;
+      color:var(--muted);
+      letter-spacing:0;
+    }
+
+    .status{
+      display:inline-flex;
+      padding:6px 12px;
+      border-radius:999px;
+      font-weight:900;
+      background:#f1f5f9;
+      margin-bottom:12px;
+    }
+
+    .status.good{color:var(--good);background:#ecfdf5}
+    .status.warn{color:var(--warn);background:#fff7ed}
+    .status.danger{color:var(--danger);background:#fef2f2}
+
+    .result-intro{
+      color:#475569;
+      text-align:center;
+      margin:0 auto 20px;
+      max-width:520px;
+    }
+
+    .section-title{
+      margin:26px 0 12px;
+      font-size:20px;
+      font-weight:900;
+    }
+
+    .issue-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .issue{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:#fff;
+    }
+
+    .issue-rank{
+      font-size:12px;
+      font-weight:900;
+      color:var(--primary);
+      margin-bottom:4px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    .issue p{
+      color:#475569;
+      margin-bottom:8px;
+      font-size:14px;
+    }
+
+    .first-action{
+      margin-top:10px;
+      padding:11px 12px;
+      background:#f8fafc;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .cta{
+      margin-top:28px;
+      background:#0f172a;
+      color:#fff;
+      border-radius:18px;
+      padding:22px 18px;
+    }
+
+    .cta h3{font-size:24px}
+    .cta p{color:#cbd5e1}
+    .cta ul{
+      padding-left:20px;
+      color:#e2e8f0;
+      font-size:14px;
+    }
+    .cta .btn{margin-top:10px}
+    .cta .btn-email{margin-top:10px}
+
+    .copy-box{
+      margin-top:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.05);
+      border-radius:12px;
+      padding:12px;
+      font-size:13px;
+      color:#e2e8f0;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+
+    .copy-btn{
+      width:100%;
+      margin-top:8px;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.25);
+      background:transparent;
+      color:#fff;
+      font-weight:800;
+    }
+
+    .form{
+      margin-top:14px;
+      display:grid;
+      gap:10px;
+    }
+
+    .field label{
+      display:block;
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:5px;
+      color:#e2e8f0;
+    }
+
+    .field input,.field textarea{
+      width:100%;
+      border:1px solid rgba(255,255,255,.18);
+      background:white;
+      color:var(--text);
+      border-radius:10px;
+      padding:12px;
+    }
+
+    .field textarea{
+      min-height:100px;
+      resize:vertical;
+    }
+
+    .privacy{
+      margin-top:14px;
+      font-size:12px;
+      color:#94a3b8;
+    }
+
+    .restart{
+      margin-top:14px;
+    }
+
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      padding:18px 6px 0;
+    }
+
+    .hidden{display:none!important}
+
+    @media (max-width:460px){
+      .checks{grid-template-columns:1fr}
+      .card{padding:22px 17px}
+      .question{font-size:21px}
+      .score{font-size:58px}
+    }
+  </style>
+
+  <!--
+    ===========================
+    設定方法（ここだけ差し替え）
+    ===========================
+
+    1) LINE公式アカウントURL
+       const LINE_URL = "https://lin.ee/XXXXXXXX";
+
+    2) 問い合わせ先メール
+       const CONTACT_EMAIL = "you@example.com";
+
+    3) GA4測定ID
+       const GA_MEASUREMENT_ID = "G-XXXXXXXXXX";
+       不要なら空文字 "" のままでOK
+  -->
+</head>
+
+<body>
+  <main class="app">
+    <div class="wrap">
+      <div class="brand">
+        <div class="brand-badge">IT</div>
+        <div>中小企業IT健康診断</div>
+      </div>
+
+      <!-- START -->
+      <section id="screenStart" class="screen active">
+        <div class="card">
+          <div class="eyebrow">無料・登録不要・約2分</div>
+          <h1>2分でわかる<br>中小企業IT健康診断</h1>
+          <p class="lead">
+            会社のIT環境について10問答えるだけで、
+            <strong>IT健康度・優先課題TOP3・まず確認したいポイント</strong>がわかります。
+          </p>
+
+          <ul class="checks">
+            <li>10問だけ</li>
+            <li>登録不要</li>
+            <li>結果はすぐ表示</li>
+            <li>営業電話なし</li>
+          </ul>
+
+          <button id="startBtn" class="btn btn-primary">無料で診断する</button>
+          <p class="small-note">回答内容はこの端末上で採点し、診断回答そのものはサーバーへ保存しません。</p>
+
+          <div class="target">
+            対象目安：従業員1〜50名程度の中小企業・個人事業
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="screenQuiz" class="screen">
+        <div class="card">
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="progressText">1 / 10</span>
+              <span>約2分</span>
+            </div>
+            <div class="progress"><div id="progressBar"></div></div>
+          </div>
+
+          <div id="categoryLabel" class="eyebrow">データ保護</div>
+          <div id="questionText" class="question"></div>
+          <div id="answers" class="answers"></div>
+
+          <div class="q-actions">
+            <button id="backBtn" class="btn btn-secondary">戻る</button>
+            <button id="nextBtn" class="btn btn-primary" disabled>次へ</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULT -->
+      <section id="screenResult" class="screen">
+        <div class="card">
+          <div class="score-box">
+            <div class="eyebrow">診断結果</div>
+            <div class="score"><span id="scoreNum">0</span><small> / 100</small></div>
+            <div id="statusBadge" class="status">要チェック</div>
+            <p id="resultIntro" class="result-intro"></p>
+          </div>
+
+          <div class="section-title">優先して確認したい課題TOP3</div>
+          <div id="issues" class="issue-list"></div>
+
+          <div class="cta">
+            <h3>この結果、本当に大丈夫？と思った方へ</h3>
+            <p>
+              明石市周辺の中小企業向けに、
+              <strong>30分無料のIT健康チェック</strong>を行っています。
+            </p>
+            <ul>
+              <li>PC・Wi-Fi・バックアップ</li>
+              <li>セキュリティ・クラウド</li>
+              <li>ITの困りごとの整理</li>
+            </ul>
+            <p>
+              無理なシステム導入や高額商品の営業ではなく、
+              「今すぐ直すこと」「そのままでよいこと」「後で検討すること」を整理します。
+            </p>
+
+            <button id="lineBtn" class="btn btn-line">LINEで診断結果について相談する</button>
+
+            <div id="copyBox" class="copy-box"></div>
+            <button id="copyBtn" class="copy-btn">この相談文をコピー</button>
+
+            <div class="form">
+              <div class="field">
+                <label for="mailName">お名前（任意）</label>
+                <input id="mailName" type="text" autocomplete="name" placeholder="山田 太郎">
+              </div>
+              <div class="field">
+                <label for="mailCompany">会社名（任意）</label>
+                <input id="mailCompany" type="text" autocomplete="organization" placeholder="株式会社〇〇">
+              </div>
+              <div class="field">
+                <label for="mailBody">相談内容</label>
+                <textarea id="mailBody"></textarea>
+              </div>
+            </div>
+
+            <button id="emailBtn" class="btn btn-email">メールで相談する</button>
+
+            <div class="privacy">
+              メールボタンを押すと、お使いのメールアプリを起動します。このページから個人情報を送信・保存することはありません。
+            </div>
+          </div>
+
+          <button id="restartBtn" class="btn btn-secondary restart">もう一度診断する</button>
+        </div>
+      </section>
+
+      <div class="footer">
+        ※本診断はIT環境の簡易チェックです。情報セキュリティ監査、法的保証、事故発生可能性の保証を行うものではありません。
+      </div>
+    </div>
+  </main>
+
+<script>
+  /* =========================
+     必須設定：ここだけ変更
+     ========================= */
+  const LINE_URL = "https://lin.ee/XXXXXXXX";
+  const CONTACT_EMAIL = "you@example.com";
+  const GA_MEASUREMENT_ID = ""; // 例: G-XXXXXXXXXX
+
+  /* =========================
+     GA4（IDが入っている場合のみ）
+     ========================= */
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+
+  if (GA_MEASUREMENT_ID) {
+    const gaScript = document.createElement("script");
+    gaScript.async = true;
+    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(gaScript);
+    gtag("js", new Date());
+    gtag("config", GA_MEASUREMENT_ID, { send_page_view: true });
+  }
+
+  const urlParams = new URLSearchParams(location.search);
+  const utm = {
+    source: urlParams.get("utm_source") || "",
+    medium: urlParams.get("utm_medium") || "",
+    campaign: urlParams.get("utm_campaign") || "",
+    content: urlParams.get("utm_content") || ""
+  };
+
+  function track(eventName, params = {}) {
+    if (!GA_MEASUREMENT_ID) return;
+    gtag("event", eventName, {
+      ...params,
+      utm_source: utm.source,
+      utm_medium: utm.medium,
+      utm_campaign: utm.campaign,
+      utm_content: utm.content
+    });
+  }
+
+  /* =========================
+     診断データ
+     ========================= */
+  const questions = [
+    {
+      category: "データ保護",
+      key: "backup_auto",
+      text: "会社の重要なデータは、自動的にバックアップされていますか？",
+      answers: [
+        { text: "自動バックアップしている", score: 10 },
+        { text: "一部だけバックアップしている", score: 5 },
+        { text: "していない・わからない", score: 0 }
+      ]
+    },
+    {
+      category: "データ保護",
+      key: "backup_restore",
+      text: "バックアップしたデータを、実際に復元できるか確認したことがありますか？",
+      answers: [
+        { text: "定期的に確認している", score: 10 },
+        { text: "バックアップはあるが、復元確認はしていない", score: 5 },
+        { text: "バックアップしていない・わからない", score: 0 }
+      ]
+    },
+    {
+      category: "データ保護",
+      key: "pc_recovery",
+      text: "主要なパソコンが故障しても、業務を続けられますか？",
+      answers: [
+        { text: "代替PCや復旧手順がある", score: 10 },
+        { text: "何とかできると思う", score: 5 },
+        { text: "特に対策していない", score: 0 }
+      ]
+    },
+    {
+      category: "セキュリティ",
+      key: "mfa",
+      text: "メールやクラウドサービスで、二段階認証を利用していますか？",
+      answers: [
+        { text: "主要サービスでは利用している", score: 10 },
+        { text: "一部だけ利用している", score: 5 },
+        { text: "利用していない・わからない", score: 0 }
+      ]
+    },
+    {
+      category: "セキュリティ",
+      key: "account_rule",
+      text: "退職者・異動者のアカウントを停止するルールがありますか？",
+      answers: [
+        { text: "ルール化して対応している", score: 10 },
+        { text: "担当者の判断で対応している", score: 5 },
+        { text: "特に決めていない・わからない", score: 0 }
+      ]
+    },
+    {
+      category: "セキュリティ",
+      key: "updates",
+      text: "Windowsやソフトウェアの更新状況を管理していますか？",
+      answers: [
+        { text: "会社で管理している", score: 10 },
+        { text: "各自に任せている", score: 5 },
+        { text: "わからない", score: 0 }
+      ]
+    },
+    {
+      category: "IT管理",
+      key: "wifi",
+      text: "社内Wi-Fiのパスワードや接続端末を管理していますか？",
+      answers: [
+        { text: "管理している", score: 10 },
+        { text: "一部だけ管理している", score: 5 },
+        { text: "管理していない・わからない", score: 0 }
+      ]
+    },
+    {
+      category: "IT管理",
+      key: "storage_rule",
+      text: "ファイル・顧客情報の保存場所やルールは決まっていますか？",
+      answers: [
+        { text: "保存場所・ルールが決まっている", score: 10 },
+        { text: "人によって違う", score: 5 },
+        { text: "決まっていない・わからない", score: 0 }
+      ]
+    },
+    {
+      category: "トラブル対応",
+      key: "it_contact",
+      text: "パソコンやITで困ったとき、相談できる人・会社は決まっていますか？",
+      answers: [
+        { text: "相談先が決まっている", score: 10 },
+        { text: "詳しい社員・知人に聞いている", score: 5 },
+        { text: "決まっていない", score: 0 }
+      ]
+    },
+    {
+      category: "トラブル対応",
+      key: "review",
+      text: "IT環境を定期的に点検・見直ししていますか？",
+      answers: [
+        { text: "半年〜1年に一度は確認している", score: 10 },
+        { text: "問題が起きたときだけ確認する", score: 5 },
+        { text: "ほとんど確認していない", score: 0 }
+      ]
+    }
+  ];
+
+  const issueMaster = {
+    "データ保護": {
+      title: "バックアップ・業務継続",
+      desc: "データが残っていても、復元できなかったり、PC故障時に業務を再開できなければ復旧に時間がかかります。",
+      action: "まず確認：重要ファイルをバックアップから実際に1つ復元できるか確認しましょう。"
+    },
+    "セキュリティ": {
+      title: "アカウント・セキュリティ",
+      desc: "二段階認証、退職者アカウント、更新管理などの基本対策は、不正アクセスや事故の予防に直結します。",
+      action: "まず確認：重要なメール・クラウドサービスの二段階認証が有効か確認しましょう。"
+    },
+    "IT管理": {
+      title: "Wi-Fi・情報管理",
+      desc: "Wi-Fiやファイル保存ルールが曖昧だと、情報が散らばり、担当者しか分からない状態になりやすくなります。",
+      action: "まず確認：重要ファイルの保存場所と、Wi-Fiの管理者を明確にしましょう。"
+    },
+    "トラブル対応": {
+      title: "ITトラブル対応体制",
+      desc: "トラブル発生後に相談先を探すと、復旧までの時間と業務停止時間が長くなることがあります。",
+      action: "まず確認：困ったときに誰へ連絡するかを1つ決めておきましょう。"
+    }
+  };
+
+  /* =========================
+     状態
+     ========================= */
+  let current = 0;
+  let selected = Array(questions.length).fill(null);
+  let started = false;
+
+  const screenStart = document.getElementById("screenStart");
+  const screenQuiz = document.getElementById("screenQuiz");
+  const screenResult = document.getElementById("screenResult");
+
+  const startBtn = document.getElementById("startBtn");
+  const progressText = document.getElementById("progressText");
+  const progressBar = document.getElementById("progressBar");
+  const categoryLabel = document.getElementById("categoryLabel");
+  const questionText = document.getElementById("questionText");
+  const answersEl = document.getElementById("answers");
+  const backBtn = document.getElementById("backBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  const scoreNum = document.getElementById("scoreNum");
+  const statusBadge = document.getElementById("statusBadge");
+  const resultIntro = document.getElementById("resultIntro");
+  const issuesEl = document.getElementById("issues");
+
+  const lineBtn = document.getElementById("lineBtn");
+  const emailBtn = document.getElementById("emailBtn");
+  const copyBox = document.getElementById("copyBox");
+  const copyBtn = document.getElementById("copyBtn");
+  const mailName = document.getElementById("mailName");
+  const mailCompany = document.getElementById("mailCompany");
+  const mailBody = document.getElementById("mailBody");
+  const restartBtn = document.getElementById("restartBtn");
+
+  function showScreen(target){
+    [screenStart, screenQuiz, screenResult].forEach(s => s.classList.remove("active"));
+    target.classList.add("active");
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  /* =========================
+     診断
+     ========================= */
+  function renderQuestion(){
+    const q = questions[current];
+    progressText.textContent = `${current + 1} / ${questions.length}`;
+    progressBar.style.width = `${((current + 1) / questions.length) * 100}%`;
+    categoryLabel.textContent = q.category;
+    questionText.textContent = q.text;
+    answersEl.innerHTML = "";
+
+    q.answers.forEach((a, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "answer";
+      btn.type = "button";
+      btn.textContent = a.text;
+
+      if (selected[current] === idx) btn.classList.add("selected");
+
+      btn.addEventListener("click", () => {
+        selected[current] = idx;
+        answersEl.querySelectorAll(".answer").forEach(el => el.classList.remove("selected"));
+        btn.classList.add("selected");
+        nextBtn.disabled = false;
+      });
+
+      answersEl.appendChild(btn);
+    });
+
+    backBtn.disabled = current === 0;
+    nextBtn.disabled = selected[current] === null;
+    nextBtn.textContent = current === questions.length - 1 ? "診断結果を見る" : "次へ";
+  }
+
+  function calculate(){
+    let total = 0;
+    const categories = {};
+
+    questions.forEach((q, i) => {
+      const answerIndex = selected[i];
+      const score = q.answers[answerIndex].score;
+      total += score;
+
+      if (!categories[q.category]) categories[q.category] = {score:0, max:0};
+      categories[q.category].score += score;
+      categories[q.category].max += 10;
+    });
+
+    const ranked = Object.entries(categories)
+      .map(([name, data]) => ({
+        name,
+        ratio: data.score / data.max,
+        score: data.score,
+        max: data.max
+      }))
+      .sort((a,b) => a.ratio - b.ratio || a.score - b.score);
+
+    return { total, ranked };
+  }
+
+  function statusFor(score){
+    if (score >= 80) return {
+      text:"良好",
+      cls:"good",
+      intro:"基本的なIT管理は比較的良好です。今の状態を維持しつつ、弱い項目を定期的に見直しましょう。"
+    };
+    if (score >= 60) return {
+      text:"要チェック",
+      cls:"warn",
+      intro:"大きな問題があるとは限りませんが、優先して確認したい項目があります。"
+    };
+    if (score >= 40) return {
+      text:"改善推奨",
+      cls:"warn",
+      intro:"IT環境にいくつか改善余地があります。業務への影響が大きい項目から順番に確認しましょう。"
+    };
+    return {
+      text:"優先確認推奨",
+      cls:"danger",
+      intro:"複数の基本対策が未確認の可能性があります。一度、現状を整理することをおすすめします。"
+    };
+  }
+
+  function buildConsultText(score, topIssues){
+    const issueNames = topIssues.map((x,i)=>`${i+1}. ${issueMaster[x.name].title}`).join("\n");
+    return `中小企業IT健康診断を利用しました。
+診断結果：${score}点
+
+気になった項目：
+${issueNames}
+
+診断結果について相談したいです。`;
+  }
+
+  function showResult(){
+    const { total, ranked } = calculate();
+    const top3 = ranked.slice(0,3);
+    const status = statusFor(total);
+
+    scoreNum.textContent = total;
+    statusBadge.textContent = status.text;
+    statusBadge.className = `status ${status.cls}`;
+    resultIntro.textContent = status.intro;
+
+    issuesEl.innerHTML = "";
+    top3.forEach((item, idx) => {
+      const data = issueMaster[item.name];
+      const div = document.createElement("div");
+      div.className = "issue";
+      div.innerHTML = `
+        <div class="issue-rank">Priority ${idx + 1}</div>
+        <h3>${data.title}</h3>
+        <p>${data.desc}</p>
+        <div class="first-action">${data.action}</div>
+      `;
+      issuesEl.appendChild(div);
+    });
+
+    const consultText = buildConsultText(total, top3);
+    copyBox.textContent = consultText;
+    mailBody.value = consultText;
+
+    lineBtn.dataset.score = total;
+    emailBtn.dataset.score = total;
+    copyBtn.dataset.text = consultText;
+
+    track("diagnosis_complete", {
+      score: total,
+      result_status: status.text,
+      top_issue_1: issueMaster[top3[0].name].title,
+      top_issue_2: issueMaster[top3[1].name].title,
+      top_issue_3: issueMaster[top3[2].name].title
+    });
+
+    if (total >= 80) track("result_good", {score:total});
+    else if (total >= 60) track("result_check", {score:total});
+    else track("result_improve", {score:total});
+
+    showScreen(screenResult);
+  }
+
+  /* =========================
+     イベント
+     ========================= */
+  startBtn.addEventListener("click", () => {
+    if (!started) {
+      track("diagnosis_start");
+      started = true;
+    }
+    current = 0;
+    renderQuestion();
+    showScreen(screenQuiz);
+  });
+
+  backBtn.addEventListener("click", () => {
+    if (current > 0) {
+      current--;
+      renderQuestion();
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (selected[current] === null) return;
+
+    if (current < questions.length - 1) {
+      current++;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  lineBtn.addEventListener("click", () => {
+    track("click_line", { score: Number(lineBtn.dataset.score || 0) });
+
+    if (LINE_URL.includes("XXXXXXXX")) {
+      alert("LINE公式アカウントURLが未設定です。index.html上部の LINE_URL を差し替えてください。");
+      return;
+    }
+
+    window.open(LINE_URL, "_blank", "noopener,noreferrer");
+  });
+
+  copyBtn.addEventListener("click", async () => {
+    try{
+      await navigator.clipboard.writeText(copyBtn.dataset.text || copyBox.textContent);
+      copyBtn.textContent = "コピーしました";
+      setTimeout(() => copyBtn.textContent = "この相談文をコピー", 1800);
+    }catch(e){
+      alert("コピーできませんでした。相談文を長押ししてコピーしてください。");
+    }
+  });
+
+  emailBtn.addEventListener("click", () => {
+    const score = Number(emailBtn.dataset.score || 0);
+    track("click_email", { score });
+
+    if (CONTACT_EMAIL === "you@example.com") {
+      alert("問い合わせ先メールが未設定です。index.html上部の CONTACT_EMAIL を差し替えてください。");
+      return;
+    }
+
+    const name = mailName.value.trim();
+    const company = mailCompany.value.trim();
+    const body = mailBody.value.trim();
+
+    const subject = `中小企業IT健康診断の相談（${score}点）`;
+
+    const fullBody =
+`${body}
+
+お名前：${name || "未入力"}
+会社名：${company || "未入力"}`;
+
+    location.href =
+      `mailto:${encodeURIComponent(CONTACT_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(fullBody)}`;
+  });
+
+  restartBtn.addEventListener("click", () => {
+    selected = Array(questions.length).fill(null);
+    current = 0;
+    started = false;
+    showScreen(screenStart);
+  });
+</script>
+</body>
+</html>
