@@ -583,8 +583,34 @@
   const GA_MEASUREMENT_ID = "G-W40VBNNWX4"; // 中小企業IT健康診断専用GA4
 
   /* =========================
-     GA4（IDが入っている場合のみ）
+     UTM取得 → GA4初期化
+     UTMをGA4標準キャンペーン情報として明示送信
      ========================= */
+  const urlParams = new URLSearchParams(window.location.search);
+  const utm = {
+    source: urlParams.get("utm_source") || "",
+    medium: urlParams.get("utm_medium") || "",
+    campaign: urlParams.get("utm_campaign") || "",
+    content: urlParams.get("utm_content") || ""
+  };
+
+  // 同一タブ内でURLパラメータが失われた場合にも備えて保持
+  try {
+    if (utm.source || utm.medium || utm.campaign || utm.content) {
+      sessionStorage.setItem("it_health_utm", JSON.stringify(utm));
+    } else {
+      const saved = JSON.parse(sessionStorage.getItem("it_health_utm") || "null");
+      if (saved) {
+        utm.source = saved.source || "";
+        utm.medium = saved.medium || "";
+        utm.campaign = saved.campaign || "";
+        utm.content = saved.content || "";
+      }
+    }
+  } catch (e) {
+    console.warn("UTM session storage skipped:", e);
+  }
+
   window.dataLayer = window.dataLayer || [];
   function gtag(){ dataLayer.push(arguments); }
 
@@ -593,17 +619,22 @@
     gaScript.async = true;
     gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
     document.head.appendChild(gaScript);
-    gtag("js", new Date());
-    gtag("config", GA_MEASUREMENT_ID, { send_page_view: true });
-  }
 
-  const urlParams = new URLSearchParams(location.search);
-  const utm = {
-    source: urlParams.get("utm_source") || "",
-    medium: urlParams.get("utm_medium") || "",
-    campaign: urlParams.get("utm_campaign") || "",
-    content: urlParams.get("utm_content") || ""
-  };
+    gtag("js", new Date());
+
+    // GA4標準の手動キャンペーンディメンションへ明示的に渡す
+    const gaConfig = {
+      send_page_view: true,
+      page_location: window.location.href
+    };
+
+    if (utm.source)   gaConfig.campaign_source = utm.source;
+    if (utm.medium)   gaConfig.campaign_medium = utm.medium;
+    if (utm.campaign) gaConfig.campaign_name = utm.campaign;
+    if (utm.content)  gaConfig.campaign_content = utm.content;
+
+    gtag("config", GA_MEASUREMENT_ID, gaConfig);
+  }
 
   function track(eventName, params) {
     // 計測処理の失敗で診断UIを止めない
