@@ -584,7 +584,7 @@
 
   /* =========================
      UTM取得 → GA4初期化
-     UTMをGA4標準キャンペーン情報として明示送信
+     UTMをGA4標準キャンペーン情報＋独自traffic_*として送信
      ========================= */
   const urlParams = new URLSearchParams(window.location.search);
   const utm = {
@@ -642,10 +642,10 @@
       if (!GA_MEASUREMENT_ID) return;
       params = params || {};
       const payload = Object.assign({}, params, {
-        utm_source: utm.source,
-        utm_medium: utm.medium,
-        utm_campaign: utm.campaign,
-        utm_content: utm.content
+        traffic_source: utm.source,
+        traffic_medium: utm.medium,
+        traffic_campaign: utm.campaign,
+        traffic_content: utm.content
       });
       gtag("event", eventName, payload);
     } catch (e) {
